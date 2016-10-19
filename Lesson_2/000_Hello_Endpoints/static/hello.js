@@ -10,7 +10,7 @@
  * The init() function loads the helloworldendpoints API.
  */
 
-function init() {
+function init2() {
 	
 	// You need to pass the root path when you load your API
 	// otherwise calls to execute the API run into a problem

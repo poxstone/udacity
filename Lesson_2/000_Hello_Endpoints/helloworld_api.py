@@ -5,9 +5,7 @@ as well as the ProtoRPC message class and container required
 for endpoint method definition.
 """
 import endpoints
-from protorpc import messages
-from protorpc import message_types
-from protorpc import remote
+from protorpc import messages, message_types, remote
 
 
 # If the request contains path or querystring arguments,
@@ -18,29 +16,36 @@ REQUEST_CONTAINER = endpoints.ResourceContainer(
     name=messages.StringField(1),
 )
 
-
-package = 'Hello'
-
+REQUEST_GREETING_CONTAINER = endpoints.ResourceContainer(
+    message_types.VoidMessage,
+    period=messages.StringField(1),
+    name=messages.StringField(2),
+)
 
 class Hello(messages.Message):
     """String that stores a message."""
     greeting = messages.StringField(1)
-
 
 @endpoints.api(name='helloworldendpoints', version='v1')
 class HelloWorldApi(remote.Service):
     """Helloworld API v1."""
 
     @endpoints.method(message_types.VoidMessage, Hello,
-      path = "sayHello", http_method='GET', name = "sayHello")
+        path = "sayHello", http_method='GET', name = "sayHello")
     def say_hello(self, request):
-      return Hello(greeting="Hello World")
+        return Hello(greeting="Hello World")
 
     @endpoints.method(REQUEST_CONTAINER, Hello,
-      path = "sayHelloByName", http_method='GET', name = "sayHelloByName")
+        path = "sayHelloByName", http_method='GET', name = "sayHelloByName")
     def say_hello_by_name(self, request):
-      greet = "Hello {}".format(request.name)
-      return Hello(greeting=greet)
+        greet = "Hello {}".format(request.name)
+        return Hello(greeting=greet)
+
+    @endpoints.method(REQUEST_GREETING_CONTAINER, Hello,
+        path = "greetByPeriod", http_method='GET', name = "greetByPeriod")
+    def greetByPeriod(self, request):
+        greet = "Good {} {}".format( request.period, request.name)
+        return Hello(greeting=greet)
 
 
 APPLICATION = endpoints.api_server([HelloWorldApi])
